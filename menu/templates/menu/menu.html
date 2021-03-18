@@ -27,14 +27,14 @@
             {% endfor %}
             <h3>{{ order.date }}</h3>
             <h3>{{ order.total }}</h3>
+            <form action="{% url 'menu:checkout' %}" method="POST">
+                {% csrf_token %}
+                <div>
+                    <input type='submit' value='Proceed to Payment'>
+                </div>
+            </form>
         {% else %}
             <h2>No orders made yet!</h2>
         {% endif %}
-        <form action="{% url 'menu:checkout' %}" method="POST">
-            {% csrf_token %}
-            <div>
-                <input type='submit' value='Proceed to Payment'>
-            </div>
-        </form>
     </div>
 {% endblock %}

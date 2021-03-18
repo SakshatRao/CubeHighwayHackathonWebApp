@@ -26,7 +26,8 @@ urlpatterns = [
     re_path(r'^$', views.homepage_view, name = 'homepage'),
     re_path(r'^unauthorized/$', views.unauthorized_view, name = 'unauthorized'),
     re_path(r'^accounts/', include('accounts.urls')),
-    re_path(r'administration/', include('administration.urls')),
-    re_path(r'customer/', include('customer.urls')),
-    re_path(r'menu/', include('menu.urls')),
+    re_path(r'^administration/', include('administration.urls')),
+    re_path(r'^customer/', include('customer.urls')),
+    re_path(r'^menu/', include('menu.urls')),
+    re_path(r'^feedback/', include('feedback.urls')),
 ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

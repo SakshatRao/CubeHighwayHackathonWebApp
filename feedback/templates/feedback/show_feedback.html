@@ -1,0 +1,17 @@
+{% extends 'customer/customer_base_template.html' %}
+
+{% block content %}
+    <div>
+        <h1>View Reviews</h1>
+        {% if reviews %}
+            {% for review in reviews %}
+                <h2>{{ review.comment }}</h2>
+                <img src="{{ review.image.url }}" height="420" width="420">
+                <h2>{{ review.rating }}</h2>
+                <br>
+            {% endfor %}
+        {% else %}
+            <h2>No Reviews made yet!</h2>
+        {% endif %}
+    </div>
+{% endblock %}

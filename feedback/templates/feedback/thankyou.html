@@ -1,0 +1,9 @@
+{% extends 'customer/customer_base_template.html' %}
+
+{% block content %}
+    <div>
+        <h1>Thank You</h1>
+    </div>
+    <a href="{% url 'customer:homepage' %}">To Homepage</a>
+    <a href="{% url 'feedback:feedback' %}">Write another Feedback</a>
+{% endblock %}

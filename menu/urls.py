@@ -11,5 +11,6 @@ urlpatterns = [
     re_path(r'^item/$', views.item_view, name = 'item'),
     re_path(r'^order_item/$', views.order_item_view, name = 'order_item'),
     re_path(r'^checkout/$', views.checkout_view, name = 'checkout'),
-    re_path(r'^payment/$', views.payment_view, name = 'payment')
+    re_path(r'^payment/$', views.payment_view, name = 'payment'),
+    re_path(r'^show_orders/$', views.show_orders_view, name = 'show_orders'),
 ]

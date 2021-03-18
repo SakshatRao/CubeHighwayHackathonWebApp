@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from utils.access import http_dict_func, customer_access
+import numpy as np
 
 from .models import FoodItem, OrderItem, Order
 
@@ -108,3 +109,10 @@ def payment_view(request):
     current_order.save()
     http_dict = http_dict_func(request)
     return render(request, 'menu/payment.html', http_dict)
+
+@customer_access()
+def show_orders_view(request):
+    customer_orders = list(request.user.customer.order_set.all())
+    http_dict = http_dict_func(request)
+    http_dict['orders'] = customer_orders
+    return render(request, 'menu/show_orders.html', http_dict)

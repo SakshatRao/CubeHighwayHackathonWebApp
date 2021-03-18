@@ -1,0 +1,17 @@
+{% extends 'customer/customer_base_template.html' %}
+
+{% block content %}
+    <div>
+        <h1>Give Feedback</h1>
+        <form action="{% url 'feedback:feedback' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div>
+                <h3>Write Feedback</h3>
+                {{ feedback_form.as_p }}
+            </div>
+            <div>
+                <input type="submit" value="Submit">
+            </div>
+        </form>
+    </div>
+{% endblock %}
