@@ -1,6 +1,8 @@
 from django.db import models
 from accounts.models import Customer
 from django.utils import timezone
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 
 # Create your models here.
 
@@ -23,8 +25,14 @@ class Order(models.Model):
     tax = models.FloatField(default = 0)
     is_paid = models.BooleanField(default = False)
     final_amt = models.FloatField(default = 0)
+    reservation = models.BooleanField(default = False)
+    reservation_price = models.FloatField(default = 0)
 
 class OrderItem(models.Model):
     food_item = models.ForeignKey(FoodItem, on_delete = models.CASCADE, null = True)
     order = models.ForeignKey(Order, on_delete = models.CASCADE, null = True)
     quantity = models.SmallIntegerField(default = 0)
+
+@receiver(post_delete, sender = FoodItem)
+def submission_delete(sender, instance, **kwargs):
+    instance.image.delete(False)

@@ -17,5 +17,14 @@
                 <input type='submit' value='Order' name="ID_{{ food_item.id }}">
             </div>
         </form>
+        {% if food_reviews %}
+            {% for review in food_reviews %}
+                <h2>{{ review.comment }}</h2>
+                <h2>{{ review.rating }}</h2>
+                <img src="{{ review.image.url }}" height="420" width="420">
+            {% endfor %}
+        {% else %}
+            <h2>No reviews available!</h2>
+        {% endif %}
     </div>
 {% endblock %}

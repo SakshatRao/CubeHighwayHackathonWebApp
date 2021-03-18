@@ -3,6 +3,7 @@ from utils.access import http_dict_func, customer_access
 import numpy as np
 
 from .models import FoodItem, OrderItem, Order
+from feedback.models import FoodItemFeedback
 
 def get_current_order(request):
     customer_orders = request.user.customer.order_set.all()
@@ -17,6 +18,9 @@ def get_current_order(request):
         order.save()
         current_order = order
     return current_order
+
+def get_reservation_price():
+    return 100
 
 # Customer Homepage (Requires login)
 @customer_access()
@@ -49,18 +53,24 @@ def menu_view(request):
     http_dict['food_items'] = food_items
     http_dict['order'] = current_order
     http_dict['order_items'] = current_order_items
+    http_dict['reservation_price'] = get_reservation_price()
     return render(request, 'menu/menu.html', http_dict)
 
 # Food Item Info page
 @customer_access()
 def item_view(request):
     if(request.method == 'POST'):
+        
         food_id = [x for x in request.POST.keys() if x.startswith('ID_')]
         assert(len(food_id) == 1)
         food_id = int(food_id[0].split('_')[1])
         food_item = FoodItem.objects.filter(id = food_id)[0]
+
+        food_reviews = list(FoodItemFeedback.objects.filter(food_item = food_item))
+        
         http_dict = http_dict_func(request)
         http_dict['food_item'] = food_item
+        http_dict['food_reviews'] = food_reviews
         return render(request, 'menu/item.html', http_dict)
 
 # Order Food Item page
@@ -96,8 +106,9 @@ def order_item_view(request):
 def checkout_view(request):
     current_order = get_current_order(request)
     current_order.total = round(current_order.total, 1)
+    current_order.reservation_price = round(current_order.reservation_price)
     current_order.tax = round(0.18543 * current_order.total, 1)
-    current_order.final_amt = round(current_order.total + current_order.tax, 0)
+    current_order.final_amt = round(current_order.total + current_order.reservation_price + current_order.tax, 0)
     current_order.save()
     current_order_items = list(current_order.orderitem_set.all())
     if(len(current_order_items) > 0):
@@ -154,7 +165,10 @@ def update_view(request):
                 current_order.save()
             else:
                 current_order.total -= (order_item.food_item.price * order_item.quantity)
-                current_order.save()
+                if(current_order.total == 0):
+                    current_order.delete()
+                else:
+                    current_order.save()
                 order_item.delete()
         elif(action == '+'):
             order_item.quantity += 1
@@ -163,7 +177,23 @@ def update_view(request):
             current_order.save()
         else:
             current_order.total -= (order_item.food_item.price * order_item.quantity)
-            current_order.save()
+            if(current_order.total == 0):
+                current_order.delete()
+            else:
+                current_order.save()
             order_item.delete()
         
+        return redirect('menu:menu')
+
+@customer_access()
+def reservation_view(request):
+    if(request.method == 'POST'):
+        current_order = get_current_order(request)
+        if(current_order.reservation == False):
+            current_order.reservation = True
+            current_order.reservation_price = get_reservation_price()
+        else:
+            current_order.reservation = False
+            current_order.reservation_price = 0
+        current_order.save()
         return redirect('menu:menu')

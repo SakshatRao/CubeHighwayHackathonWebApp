@@ -14,4 +14,5 @@ urlpatterns = [
     re_path(r'^payment/$', views.payment_view, name = 'payment'),
     re_path(r'^show_orders/$', views.show_orders_view, name = 'show_orders'),
     re_path(r'^update/$', views.update_view, name = 'update'),
+    re_path(r'^reservation/$', views.reservation_view, name = 'reservation'),
 ]

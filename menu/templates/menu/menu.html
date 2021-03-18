@@ -45,6 +45,25 @@
             {% endfor %}
             <h3>{{ order.date }}</h3>
             <h3>{{ order.total }}</h3>
+            {% if order.reservation %}
+                <h3>Reservation Booked!</h3>
+                <h3>Reservation Charge: Rs. {{ order.reservation_price }}</h3>
+                <form action="{% url 'menu:reservation' %}" method="POST">
+                    {% csrf_token %}
+                    <div>
+                        <input type='submit' value='Remove Reservation'>
+                    </div>
+                </form>
+            {% else %}
+                <h3>Reservation Available!</h3>
+                <h3>Current Reservation Price: Rs. {{ reservation_price }}</h3>
+                <form action="{% url 'menu:reservation' %}" method="POST">
+                    {% csrf_token %}
+                    <div>
+                        <input type='submit' value='Book Reservation'>
+                    </div>
+                </form>
+            {% endif %}
             <form action="{% url 'menu:checkout' %}" method="POST">
                 {% csrf_token %}
                 <div>
