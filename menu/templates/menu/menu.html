@@ -24,6 +24,24 @@
             {% for order_item in order_items %}
                 <h3>{{ order_item.food_item.name }}</h3>
                 <h3>{{ order_item.quantity }}</h3>
+                <form action="{% url 'menu:update' %}" method="POST">
+                    {% csrf_token %}
+                    <div>
+                        <input type='submit' value='-' name="ID-_{{ order_item.id }}">
+                    </div>
+                </form>
+                <form action="{% url 'menu:update' %}" method="POST">
+                    {% csrf_token %}
+                    <div>
+                        <input type='submit' value='+' name="ID+_{{ order_item.id }}">
+                    </div>
+                </form>
+                <form action="{% url 'menu:update' %}" method="POST">
+                    {% csrf_token %}
+                    <div>
+                        <input type='submit' value='DELETE' name="IDx_{{ order_item.id }}">
+                    </div>
+                </form>
             {% endfor %}
             <h3>{{ order.date }}</h3>
             <h3>{{ order.total }}</h3>

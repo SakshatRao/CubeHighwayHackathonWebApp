@@ -95,6 +95,10 @@ def order_item_view(request):
 @customer_access()
 def checkout_view(request):
     current_order = get_current_order(request)
+    current_order.total = round(current_order.total, 1)
+    current_order.tax = round(0.18543 * current_order.total, 1)
+    current_order.final_amt = round(current_order.total + current_order.tax, 0)
+    current_order.save()
     current_order_items = list(current_order.orderitem_set.all())
     if(len(current_order_items) > 0):
         http_dict = http_dict_func(request)
@@ -113,6 +117,53 @@ def payment_view(request):
 @customer_access()
 def show_orders_view(request):
     customer_orders = list(request.user.customer.order_set.all())
+    customer_orders = [x for x in customer_orders if x.is_paid == True]
     http_dict = http_dict_func(request)
     http_dict['orders'] = customer_orders
     return render(request, 'menu/show_orders.html', http_dict)
+
+@customer_access()
+def update_view(request):
+    if(request.method == 'POST'):
+        
+        current_order = get_current_order(request)
+        
+        action = -1
+        for key in request.POST.keys():
+            if(key.startswith('ID-_')):
+                action = '-'
+                break
+            elif(key.startswith('ID+_')):
+                action = '+'
+                break
+            elif(key.startswith('IDx_')):
+                action = 'x'
+                break
+        assert(action != -1)
+
+        order_item_id = [x for x in request.POST.keys() if x.startswith(f"ID{action}_")]
+        assert(len(order_item_id) == 1)
+        order_item_id = int(order_item_id[0].split('_')[1])
+        order_item = OrderItem.objects.filter(id = order_item_id)[0]
+        
+        if(action == '-'):
+            if(order_item.quantity > 1):
+                order_item.quantity -= 1
+                order_item.save()
+                current_order.total -= order_item.food_item.price
+                current_order.save()
+            else:
+                current_order.total -= (order_item.food_item.price * order_item.quantity)
+                current_order.save()
+                order_item.delete()
+        elif(action == '+'):
+            order_item.quantity += 1
+            order_item.save()
+            current_order.total += order_item.food_item.price
+            current_order.save()
+        else:
+            current_order.total -= (order_item.food_item.price * order_item.quantity)
+            current_order.save()
+            order_item.delete()
+        
+        return redirect('menu:menu')

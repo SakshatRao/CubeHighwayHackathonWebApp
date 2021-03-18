@@ -9,6 +9,8 @@
         {% endfor %}
         <h3>{{ order.date }}</h3>
         <h3>{{ order.total }}</h3>
+        <h3>{{ order.tax }}</h3>
+        <h3>{{ order.final_amt }}</h3>
     </div>
     <a href="{% url 'menu:menu' %}">Back to Menu</a>
     <a href="{% url 'menu:payment' %}">Proceed to Payment</a>
