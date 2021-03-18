@@ -1,0 +1,28 @@
+{% extends 'homepage_base_template.html' %}
+
+{% block content %}
+    <div>
+        <h1>Sign Up as Patient</h1>
+        <form action="{% url 'accounts:signup' %}" method="post">
+            {% csrf_token %}
+            <div>
+                <h3>User Details</h3>
+                {{user_form}}
+            </div>
+            <br>
+            <div>
+                <h3>Personal Details</h3>
+                {{customer_form}}
+            </div>
+            <div>
+                <input type="submit" value="Sign Up">
+            </div>
+        </form>
+    </div>
+    <div>
+        <h3>Already a CubeStopper?</h3>
+        <div>
+            <a href="{% url 'accounts:login' %}">Login</a>
+        </div>
+    </div>
+{% endblock %}

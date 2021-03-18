@@ -1,0 +1,22 @@
+{% extends 'homepage_base_template.html' %}
+
+{% block content %}
+    <div>
+        <h1>Edit Patient Details</h1>
+        <form action="{% url 'accounts:edit' %}" method="post">
+            {% csrf_token %}
+            <div>
+                <h3>User Details</h3>
+                {{user_form}}
+            </div>
+            <br>
+            <div>
+                <h3>Personal Details</h3>
+                {{customer_form}}
+            </div>
+            <div>
+                <input type="submit" value="Edit">
+            </div>
+        </form>
+    </div>
+{% endblock %}

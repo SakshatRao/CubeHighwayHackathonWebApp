@@ -1,0 +1,11 @@
+{% extends 'base_template.html' %}
+{% load static %}
+
+{% block img-file %}
+    <link rel="stylesheet" href="{% static 'CSS_files/homepage_base_template.css' %}">
+    <style>
+        body {
+            background-image: url(/static/Images/homepage.jpg);
+        }
+    </style>
+{% endblock %}

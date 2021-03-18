@@ -1,0 +1,23 @@
+{% extends 'homepage_base_template.html' %}
+
+{% block content %}
+    <div>
+        <h1>Login</h1>
+        <form action="{% url 'accounts:login' %}" method="post">
+            {% csrf_token %}
+            {{user_form}}
+            <div>
+                <input type="submit" value='Log In'>
+            </div>
+            {% if request.GET.next  %}
+                <input type="hidden" name='next' value="{{ request.GET.next }}">
+            {% endif %}
+        </form>
+    </div>
+    <div>
+        <h3>Don't have an account?</h3>
+        <div>
+            <a href="{% url 'accounts:signup' %}">Signup</a>
+        </div>
+    </div>
+{% endblock %}
