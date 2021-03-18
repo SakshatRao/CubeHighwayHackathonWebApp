@@ -4,4 +4,37 @@
     <div>
         <h1>Virtual Menu</h1>
     </div>
+    <div>
+        {% for food_item in food_items %}
+            <div>
+                <h2>{{ food_item.name }}</h2>
+                <img src="{{ food_item.image.url }}" height="420" width="420">
+                <form action="{% url 'menu:item' %}" method="POST">
+                    {% csrf_token %}
+                    <div>
+                        <input type='submit' value='Explore' name="ID_{{ food_item.id }}">
+                    </div>
+                </form>
+            </div>
+            <br>
+        {% endfor %}
+    </div>
+    <div>
+        {% if order_items %}
+            {% for order_item in order_items %}
+                <h3>{{ order_item.food_item.name }}</h3>
+                <h3>{{ order_item.quantity }}</h3>
+            {% endfor %}
+            <h3>{{ order.date }}</h3>
+            <h3>{{ order.total }}</h3>
+        {% else %}
+            <h2>No orders made yet!</h2>
+        {% endif %}
+        <form action="{% url 'menu:checkout' %}" method="POST">
+            {% csrf_token %}
+            <div>
+                <input type='submit' value='Proceed to Payment'>
+            </div>
+        </form>
+    </div>
 {% endblock %}

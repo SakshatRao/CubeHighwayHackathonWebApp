@@ -16,6 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.conf.urls import include
 from django.urls import re_path
+from django.conf.urls.static import static
+from django.conf import settings
 
 from . import views
 
@@ -27,4 +29,4 @@ urlpatterns = [
     re_path(r'administration/', include('administration.urls')),
     re_path(r'customer/', include('customer.urls')),
     re_path(r'menu/', include('menu.urls')),
-]
+] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

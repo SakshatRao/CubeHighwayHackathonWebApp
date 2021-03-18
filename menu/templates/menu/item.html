@@ -1,0 +1,21 @@
+{% extends 'menu/menu_base_template.html' %}
+
+{% block content %}
+    <div>
+        <h1>Food Item Description</h1>
+        <h2>{{ food_item.name }}</h2>
+        <h2>{{ food_item.description }}</h2>
+        <h2>{{ food_item.price }}</h2>
+        <h2>{{ food_item.rating }}</h2>
+        <form action="{% url 'menu:order_item' %}" method="POST">
+            {% csrf_token %}
+            <h3>Quantity</h3>
+            <div>
+                <input type='number' name="qty">
+            </div>
+            <div>
+                <input type='submit' value='Order' name="ID_{{ food_item.id }}">
+            </div>
+        </form>
+    </div>
+{% endblock %}

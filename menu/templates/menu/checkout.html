@@ -1,0 +1,15 @@
+{% extends 'menu/menu_base_template.html' %}
+
+{% block content %}
+    <div><h2>Confirm Order</h2></div>
+    <div>
+        {% for order_item in order_items %}
+            <h3>{{ order_item.food_item.name }}</h3>
+            <h3>{{ order_item.quantity }}</h3>
+        {% endfor %}
+        <h3>{{ order.date }}</h3>
+        <h3>{{ order.total }}</h3>
+    </div>
+    <a href="{% url 'menu:menu' %}">Back to Menu</a>
+    <a href="{% url 'menu:payment' %}">Proceed to Payment</a>
+{% endblock %}
