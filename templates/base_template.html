@@ -3,15 +3,77 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="utf-8">
-        <title>FoodStop</title>
+        <title>CubeStop Website</title>
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'CSS_files/bootstrap.min.css' %}">
+        <script src="{% static 'JS_files/jquery.min.js' %}"></script>
+        <script src="{% static 'JS_files/popper.min.js' %}"></script>
+        <script src="{% static 'JS_files/bootstrap.min.js' %}"></script>
     </head>
     <body>
-        {% block img-file %}
-        {% endblock %}
-        <div class="site-content">
+        <div id='nav_bar'>
+            <div class='d-flex flex-row'>
+                {% if user.is_authenticated %}
+                    {% if user.is_superuser %}
+                        <a href="{% url 'administration:homepage' %}" class='mr-auto'>
+                            <div id='logo'><img src="{% static 'Images/cubestop_logo.png' %}" alt="logo" width="150" height='100'></div>
+                        </a>
+                    {% else %}
+                        <a href="{% url 'customer:homepage' %}" class='mr-auto'>
+                            <div id='logo'><img src="{% static 'Images/cubestop_logo.png' %}" alt="logo" width="150" height='100'></div>
+                        </a>
+                    {% endif %}
+                {% else %}
+                    <a href="{% url 'homepage' %}" class='mr-auto'>
+                        <div id='logo'><img src="{% static 'Images/cubestop_logo.png' %}" alt="logo" width="150" height='100'></div>
+                    </a>
+                {% endif %}
+
+                <div class='d-flex flex-column'>
+                    {% if user.is_authenticated %}
+                        <h2 id='nav_msg'>Welcome {{ user.first_name }} {{ user.last_name }} </h2>
+                    {% else %}
+                        <h2 id='nav_msg'>Join now and become a CubeStopper!</h2>
+                    {% endif %}
+                    <div class='d-flex justify-content-end flex-fill'>
+                        {% if user.is_authenticated %}
+                            {% if user.is_superuser %}
+                                <a href="{% url 'admin:login' %}">
+                                    <div class='nav_button'><h2>Admin</h2></div>
+                                </a>
+                                <a href="{% url 'accounts:logout' %}">
+                                    <div class='nav_button'><h2>Logout</h2></div>
+                                </a>
+                            {% else %}
+                                <a href="{% url 'accounts:edit' %}">
+                                    <div class='nav_button'><h2>Edit Profile</h2></div>
+                                </a>
+                                <a href="{% url 'accounts:logout' %}">
+                                    <div class='nav_button'><h2>Logout</h2></div>
+                                </a>
+                            {% endif %}
+                        {% else %}
+                            <a href="{% url 'accounts:login' %}">
+                                <div class='nav_button'><h2>Login</h2></div>
+                            </a>
+                            <a href="{% url 'accounts:signup' %}">
+                                <div class='nav_button'><h2>Signup</h2></div>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <link rel="stylesheet" href="{% static 'CSS_files/nav_bar.css' %}">
+
+        <div id="site_content" class='mx-auto'>
             {% block content %}
             {% endblock %}
         </div>
+        <link rel="stylesheet" href="{% static 'CSS_files/site_content.css' %}">
+        
+        {% block img-file %}
+        {% endblock %}
+
     </body>
 </html>

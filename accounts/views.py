@@ -29,8 +29,10 @@ def signup_view(request):
                 else:
                     new_customer = existing_customer[0]
                 new_customer.save()
+                print("Hey")
                 return redirect('customer:homepage')
             except IntegrityError:
+                print("LOL")
                 user.delete()
                 return render(request, 'already_exists.html', http_dict_func(request))
     else:
@@ -62,9 +64,8 @@ def login_view(request):
     return render(request, 'accounts/login.html', http_dict)
 
 # Logout Page
-@decorators.login_required(login_url = 'homepage')
+@decorators.login_required(login_url = 'unauthorized')
 def logout_view(request):
-    assert request.method == 'POST'
     logout(request)
     return redirect('homepage')
 

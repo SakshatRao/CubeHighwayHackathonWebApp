@@ -1,23 +1,29 @@
 {% extends 'homepage_base_template.html' %}
+{% load static %}
 
 {% block content %}
-    <div>
+    <div class='title'>
         <h1>Login</h1>
-        <form action="{% url 'accounts:login' %}" method="post">
+    </div>
+
+    <div id='content' class='mx-auto'>
+        <form action="{% url 'accounts:login' %}" method="post" class='form_input'>
             {% csrf_token %}
-            {{user_form}}
+            <div>{{ user_form.as_p }}</div>
             <div>
-                <input type="submit" value='Log In'>
+                <input type="submit" value='Log In' class='input_button'>
             </div>
             {% if request.GET.next  %}
                 <input type="hidden" name='next' value="{{ request.GET.next }}">
             {% endif %}
         </form>
-    </div>
-    <div>
-        <h3>Don't have an account?</h3>
-        <div>
-            <a href="{% url 'accounts:signup' %}">Signup</a>
+
+        <div id='other_forms'>
+            <h3>Don't have an account?</h3>
+            <div>
+                <a href="{% url 'accounts:signup' %}" class='a_button'>Signup</a>
+            </div>
         </div>
     </div>
+    <link rel="stylesheet" href="{% static 'CSS_files/accounts/login.css' %}">
 {% endblock %}
