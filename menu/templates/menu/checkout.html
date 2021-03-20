@@ -1,20 +1,60 @@
 {% extends 'menu/menu_base_template.html' %}
+{% load static %}
 
 {% block content %}
-    <div><h2>Confirm Order</h2></div>
-    <div>
-        {% for order_item in order_items %}
-            <h3>{{ order_item.food_item.name }}</h3>
-            <h3>{{ order_item.quantity }}</h3>
-        {% endfor %}
-        <h3>{{ order.date }}</h3>
-        <h3>{{ order.total }}</h3>
-        {% if order.reservation %}
-            <h3>{{ order.reservation_price }}</h3>
-        {% endif %}
-        <h3>{{ order.tax }}</h3>
-        <h3>{{ order.final_amt }}</h3>
+    <div class='title'>
+        <h1>Order Confirmation</h1>
     </div>
-    <a href="{% url 'menu:menu' %}">Back to Menu</a>
-    <a href="{% url 'menu:payment' %}">Proceed to Payment</a>
+    
+    <div id='content' class='mx-auto'>
+        <table class='checkout_table mx-auto'>
+            <tr>
+                <th><h2>Item</h2></th>
+                <th><h2>Qty</h2></th>
+                <th><h2>Price</h2></th>
+            </tr>
+            {% for order_item in order_items %}
+                <tr>
+                    <td><h4>{{ order_item.food_item.name }}</h4></td>
+                    <td><h4>{{ order_item.quantity }}</h4></td>
+                    <td><h4>{{ order_item.food_item.price }}</h4></td>
+                </tr>
+            {% endfor %}
+        </table>
+        <br>
+        <br>
+        <table class='checkout_table mx-auto'>
+            <tr>
+                <th><h2>Service</h2></th>
+                <th><h2>Charge</h2></th>
+            </tr>
+            <tr>
+                <td><h4>Order Total</h4></td>
+                <td><h4>{{ order.total }}</h4></td>
+            </tr>
+            <tr>
+                {% if order.reservation %}
+                    <td><h4>Reservation</h4></td>
+                    <td><h4>{{ order.reservation_price }}</h4></td>
+                {% endif %}
+            </tr>
+            <tr>
+                <td><h4>Tax</h4></td>
+                <td><h4>{{ order.tax }}</h4></td>
+            </tr>
+            <tr>
+                <td><h4>Final Amount</h4></td>
+                <td><h4><b>{{ order.final_amt }}</b></h4></td>
+            </tr>
+        </table>
+        <br>
+        <br>
+        <div class='mx-auto checkout_end'>
+            <h5>{{ order.date }}</h4>
+            <br>
+            <a href="{% url 'menu:menu' %}" class='a_button'>Back to Menu</a>
+            <a href="{% url 'menu:payment' %}" class='a_button'>Proceed to Payment</a>
+        </div>
+    </div>
+    <link rel="stylesheet" href="{% static 'CSS_files/menu/checkout.css' %}">
 {% endblock %}

@@ -22,6 +22,13 @@ def get_current_order(request):
 def get_reservation_price():
     return 100
 
+def get_food_from_category(food_items, target_category):
+    chosen_foods = []
+    for item in food_items:
+        if(item.food_category == target_category):
+            chosen_foods.append(item)
+    return chosen_foods
+
 # Customer Homepage (Requires login)
 @customer_access()
 def menu_view(request):
@@ -37,6 +44,12 @@ def menu_view(request):
         food_item_dict['is_veg'] = food_item.is_veg
         food_items.append(food_item)
     
+    starters = get_food_from_category(food_items, 'ST')
+    main_courses = get_food_from_category(food_items, 'MC')
+    desserts = get_food_from_category(food_items, 'DE')
+    breads = get_food_from_category(food_items, 'BR')
+    snacks = get_food_from_category(food_items, 'SN')
+    
     customer_orders = request.user.customer.order_set.all()
     has_unpaid_order = False
     for order in customer_orders:
@@ -50,7 +63,11 @@ def menu_view(request):
         current_order_items = []
 
     http_dict = http_dict_func(request)
-    http_dict['food_items'] = food_items
+    http_dict['st_items'] = starters
+    http_dict['mc_items'] = main_courses
+    http_dict['de_items'] = desserts
+    http_dict['br_items'] = breads
+    http_dict['sn_items'] = snacks
     http_dict['order'] = current_order
     http_dict['order_items'] = current_order_items
     http_dict['reservation_price'] = get_reservation_price()
@@ -120,8 +137,9 @@ def checkout_view(request):
 @customer_access()
 def payment_view(request):
     current_order = get_current_order(request)
-    current_order.is_paid = True
-    current_order.save()
+    if(current_order.total > 0):
+        current_order.is_paid = True
+        current_order.save()
     http_dict = http_dict_func(request)
     return render(request, 'menu/payment.html', http_dict)
 

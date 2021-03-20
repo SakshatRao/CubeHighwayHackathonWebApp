@@ -1,8 +1,12 @@
 {% extends 'menu/menu_base_template.html' %}
+{% load static %}
 
 {% block content %}
-    <div>
-        <h1>Thank you! Your order has been placed!</h1>
+    <div id='content' class='mx-auto'>
+        <div class='mx-auto'>
+            <h2 class='single_msg mx-auto'>Thank you! Your order has been placed!</h2>
+            <br>
+            <div style="text-align: center;"><a href="{% url 'customer:homepage' %}" class='a_button'>Home Page</a></div>
+        </div>
     </div>
-    <a href="{% url 'menu:menu' %}">Menu</a>
 {% endblock %}

@@ -44,3 +44,12 @@
     border-style: hidden;
     border-radius: 5px;
 }
+
+.button_button {
+    background-color: #00F5C0;
+    color: black;
+    font-weight: bold;
+    font-size: 20px;
+    border-style: hidden;
+    border-radius: 5px;
+}

@@ -1,7 +1,29 @@
 {% extends 'customer/customer_base_template.html' %}
+{% load static %}
 
 {% block content %}
-    <div>
+    
+    <div class='title'>
         <h1>Customer Homepage</h1>
     </div>
+
+    <div id='content' class='mx-auto'>
+        <div class='options_page d-inline-flex'>
+            <a href="{% url 'menu:menu' %}" class='customer_options flex-fill'>
+                <div>
+                    <h2>Virtual Menu</h2>
+                    <h3>Explore our FoodStops' menu while sitting in your car!</h3>
+                    <img src="{% static 'Images/menu.jpg' %}" alt="menu" width="500" height="750">
+                </div>
+            </a>
+            <a href="{% url 'feedback:feedback' %}" class='customer_options flex-fill'>
+                <div>
+                    <h2>Quick Feedback</h2>
+                    <h3>Help us by giving super-easy simple feedbacks!</h3>
+                    <img src="{% static 'Images/feedback.jpg' %}" alt="feedback" width="500" height="750">
+                </div>
+            </a>
+        </div>
+    </div>
+    <link rel="stylesheet" href="{% static 'CSS_files/customer/homepage.css' %}">
 {% endblock %}

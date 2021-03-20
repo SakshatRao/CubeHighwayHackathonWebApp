@@ -1,9 +1,16 @@
 {% extends 'customer/customer_base_template.html' %}
+{% load static %}
 
 {% block content %}
-    <div>
-        <h1>Thank You</h1>
+    <div id='content' class='mx-auto'>
+        <div class='mx-auto'>
+            <h2 class='single_msg mx-auto'>Thank you!</h2>
+            <br>
+            <div style="text-align: center;"><a href="{% url 'feedback:feedback' %}" class='a_button'>Write Another Feedback</a></div>
+            <br>
+            <div style="text-align: center;"><a href="{% url 'feedback:show_feedback' %}" class='a_button'>View previous Reviews</a></div>
+            <br>
+            <div style="text-align: center;"><a href="{% url 'customer:homepage' %}" class='a_button'>Home Page</a></div>
+        </div>
     </div>
-    <a href="{% url 'customer:homepage' %}">To Homepage</a>
-    <a href="{% url 'feedback:feedback' %}">Write another Feedback</a>
 {% endblock %}

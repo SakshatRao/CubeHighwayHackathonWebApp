@@ -10,9 +10,11 @@ class FoodItem(models.Model):
     name = models.CharField(default = '', max_length = 20)
     description = models.TextField(default = '')
     image = models.ImageField(upload_to = 'food_imgs/')
-    rating = models.SmallIntegerField(default = 0, choices = [(0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (5, 5)])
+    rating = models.DecimalField(default = 3, max_digits = 3, decimal_places = 2)
+    is_hot = models.BooleanField(default = False)
+    is_recommended = models.BooleanField(default = False)
     is_veg = models.BooleanField(default = True)
-    food_category = models.CharField(choices = [('ST', 'Starters'), ('MC', 'Main Course'), ('DE', 'Dessert')], default = 'MC', max_length = 10)
+    food_category = models.CharField(choices = [('MC', 'Main Course'), ('DE', 'Dessert'), ('BR', 'Bread'), ('SN', 'Snacks')], default = 'MC', max_length = 10)
     ingredients = models.TextField(default = '')
     price = models.SmallIntegerField(default = 0)
     def __str__(self):
