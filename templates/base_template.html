@@ -33,7 +33,32 @@
 
                 <div class='d-flex flex-column'>
                     {% if user.is_authenticated %}
-                        <h2 id='nav_msg'>Welcome {{ user.first_name }} {{ user.last_name }} </h2>
+                        {% if user.is_superuser %}
+                            <h2 id='nav_msg'>Welcome {{ user.first_name }} {{ user.last_name }}</h2>
+                        {% else %}
+                            <h2 id='nav_msg'>Welcome {{ user.first_name }} {{ user.last_name }} <span id='points_show'>{{ user.customer.points }}</span></h2>
+                            <script>
+                                $('#points_show').each(function(){
+                                var numResult = parseInt($(this).html());
+                                if(numResult >= 10000) {
+                                    $(this).css('background','#E5E4E2');
+                                    $(this).css("color", 'black');
+                                } else if (numResult >= 5000) {
+                                    $(this).css('background','gold');
+                                    $(this).css('color','black');
+                                } else if (numResult >= 2500) {
+                                    $(this).css('background','silver');
+                                    $(this).css('color','black');
+                                } else if (numResult >= 1000) {
+                                    $(this).css('background','#CD7F32');
+                                    $(this).css('color','black');
+                                } else {
+                                    $(this).css('background','#00F5C0');
+                                    $(this).css('color','black');
+                                }
+                            })
+                            </script>
+                        {% endif %}
                     {% else %}
                         <h2 id='nav_msg'>Join now and become a CubeStopper!</h2>
                     {% endif %}

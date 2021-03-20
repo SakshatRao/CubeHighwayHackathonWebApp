@@ -3,6 +3,7 @@ from accounts.models import Customer
 from django.utils import timezone
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
+from customer.models import Coupon
 
 # Create your models here.
 
@@ -29,6 +30,9 @@ class Order(models.Model):
     final_amt = models.FloatField(default = 0)
     reservation = models.BooleanField(default = False)
     reservation_price = models.FloatField(default = 0)
+    membership_discount = models.FloatField(default = 0)
+    coupon = models.OneToOneField(Coupon, on_delete = models.SET_NULL, null = True, blank = True)
+    coupon_discount = models.FloatField(default = 0)
 
 class OrderItem(models.Model):
     food_item = models.ForeignKey(FoodItem, on_delete = models.CASCADE, null = True)

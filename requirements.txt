@@ -1,0 +1,7 @@
+django
+django-heroku
+numpy
+gunicorn
+pathlib
+datetime
+whitenoise

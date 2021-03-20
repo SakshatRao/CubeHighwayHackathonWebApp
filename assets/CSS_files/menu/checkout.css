@@ -18,3 +18,20 @@
 .checkout_end {
     text-align: center;
 }
+
+.btn {
+    background-color: #00F5C0;
+    color: black;
+}
+
+.dropdown-menu li {
+    cursor: pointer;
+}
+
+.dropdown-menu li:hover {
+    background-color: #00F5C0;
+}
+
+#searchForm {
+    text-align: center;
+}

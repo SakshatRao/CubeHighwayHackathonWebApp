@@ -5,8 +5,15 @@
     <div id='content' class='mx-auto'>
         <div class='mx-auto'>
             <h2 class='single_msg mx-auto'>Thank you! Your order has been placed!</h2>
+            {% if coupon %}
+                <div class="congrats_msg mx-auto">
+                    <h1>Congratulations!</h1>
+                    <p>You have received a {{ coupon.percentage }}% Discount Coupon!</p>
+                </div>
+            {% endif %}
             <br>
             <div style="text-align: center;"><a href="{% url 'customer:homepage' %}" class='a_button'>Home Page</a></div>
         </div>
+        <link rel="stylesheet" href="{% static 'CSS_files/menu/payment.css' %}">
     </div>
 {% endblock %}

@@ -33,6 +33,18 @@
                 <td><h4>{{ order.total }}</h4></td>
             </tr>
             <tr>
+                {% if order.membership_discount %}
+                    <td><h4>Membership Discount</h4></td>
+                    <td><h4>{{ order.membership_discount }}</h4></td>
+                {% endif %}
+            </tr>
+            <tr>
+                {% if order.coupon_discount %}
+                    <td><h4>Coupon Discount</h4></td>
+                    <td><h4>{{ order.coupon_discount }}</h4></td>
+                {% endif %}
+            </tr>
+            <tr>
                 {% if order.reservation %}
                     <td><h4>Reservation</h4></td>
                     <td><h4>{{ order.reservation_price }}</h4></td>
@@ -48,6 +60,29 @@
             </tr>
         </table>
         <br>
+        <form name="searchForm" id="searchForm" method="POST" action="{% url 'menu:checkout' %}">
+            {% csrf_token %}
+            <div class="input-append">
+                <input class="span2" id="coupon_id" name="coupon_id" type="hidden">
+                <div class="btn-group">
+                <button class="btn dropdown-toggle" data-toggle="dropdown">
+                    {% if order.coupon %}
+                        Applied {{ order.coupon.percentage }}% Discount Coupon
+                    {% else %}
+                        Use Coupon?
+                    {% endif %}
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li onclick="$('#coupon_id').val('-1'); $('#searchForm').submit()">Don't use Coupon</li>
+                    <div class='dropdown-divider'></div>
+                    {% for coupon in avail_coupons %}
+                        <li onclick="$('#coupon_id').val('{{ coupon.id }}'); $('#searchForm').submit()">{{ coupon }}</li>
+                    {% endfor %}
+                </ul>
+                </div>
+            </div>
+        </form>
         <br>
         <div class='mx-auto checkout_end'>
             <h5>{{ order.date }}</h4>
@@ -55,6 +90,7 @@
             <a href="{% url 'menu:menu' %}" class='a_button'>Back to Menu</a>
             <a href="{% url 'menu:payment' %}" class='a_button'>Proceed to Payment</a>
         </div>
+
     </div>
     <link rel="stylesheet" href="{% static 'CSS_files/menu/checkout.css' %}">
 {% endblock %}

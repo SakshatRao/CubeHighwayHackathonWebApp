@@ -4,6 +4,7 @@ import numpy as np
 
 from .models import FoodItem, OrderItem, Order
 from feedback.models import FoodItemFeedback
+from customer.models import Coupon
 
 def get_current_order(request):
     customer_orders = request.user.customer.order_set.all()
@@ -28,6 +29,15 @@ def get_food_from_category(food_items, target_category):
         if(item.food_category == target_category):
             chosen_foods.append(item)
     return chosen_foods
+
+def random_coupon_gen(customer):
+    thresh = 0.1
+    if(np.random.uniform() < thresh):
+        coupon = Coupon(customer = customer, percentage = round(np.random.uniform(low = 5, high = 20), 0))
+        coupon.save()
+        return coupon
+    else:
+        return None
 
 # Customer Homepage (Requires login)
 @customer_access()
@@ -122,25 +132,72 @@ def order_item_view(request):
 @customer_access()
 def checkout_view(request):
     current_order = get_current_order(request)
+    
+    if((request.method == 'POST') & ('coupon_id' in request.POST.keys())):
+        if(int(request.POST['coupon_id']) < 0):
+            current_order.coupon = None
+        else:
+            coupon_id = Coupon.objects.get(id = request.POST['coupon_id'])
+            current_order.coupon = coupon_id
+    
     current_order.total = round(current_order.total, 1)
+    
+    if(request.user.customer.membership_disc_appl == True):
+        if(request.user.customer.membership == 'P'):
+            current_order.membership_discount = 0.1 * current_order.total
+        elif(request.user.customer.membership == 'G'):
+            current_order.membership_discount = 0.075 * current_order.total
+        elif(request.user.customer.membership == 'S'):
+            current_order.membership_discount = 0.05 * current_order.total
+        elif(request.user.customer.membership == 'B'):
+            current_order.membership_discount = 0.025 * current_order.total
+    
+    if(current_order.coupon != None):
+        current_order.coupon_discount = current_order.total * current_order.coupon.percentage / 100
+    else:
+        current_order.coupon_discount = 0
+    
     current_order.reservation_price = round(current_order.reservation_price)
+    
     current_order.tax = round(0.18543 * current_order.total, 1)
-    current_order.final_amt = round(current_order.total + current_order.reservation_price + current_order.tax, 0)
+    
+    current_order.final_amt = round(current_order.total + current_order.reservation_price + current_order.tax - current_order.membership_discount - current_order.coupon_discount, 0)
     current_order.save()
     current_order_items = list(current_order.orderitem_set.all())
+    avail_coupons = request.user.customer.coupon_set.all()
     if(len(current_order_items) > 0):
         http_dict = http_dict_func(request)
         http_dict['order'] = current_order
         http_dict['order_items'] = current_order_items
+        http_dict['avail_coupons'] = avail_coupons
         return render(request, 'menu/checkout.html', http_dict)
 
 @customer_access()
 def payment_view(request):
     current_order = get_current_order(request)
+    http_dict = http_dict_func(request)
     if(current_order.total > 0):
         current_order.is_paid = True
+        coupon = current_order.coupon
+        if(coupon != None):
+            current_order.coupon = None
+            coupon.delete()
         current_order.save()
-    http_dict = http_dict_func(request)
+        request.user.customer.membership_disc_appl ^= 1
+        request.user.customer.points += current_order.total // 10
+        if(request.user.customer.points > 10000):
+            request.user.customer.membership = 'P'
+        elif(request.user.customer.points > 5000):
+            request.user.customer.membership = 'G'
+        elif(request.user.customer.points > 2500):
+            request.user.customer.membership = 'S'
+        elif(request.user.customer.points > 1000):
+            request.user.customer.membership = 'B'
+        else:
+            request.user.customer.membership = 'N'
+        request.user.customer.save()
+        coupon = random_coupon_gen(request.user.customer)
+        http_dict['coupon'] = coupon
     return render(request, 'menu/payment.html', http_dict)
 
 @customer_access()

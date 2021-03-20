@@ -4,6 +4,16 @@ import numpy as np
 
 from menu.models import FoodItem
 from . import forms
+from customer.models import Coupon
+
+def random_coupon_gen(customer):
+    thresh = 1
+    if(np.random.uniform() < thresh):
+        coupon = Coupon(customer = customer, percentage = round(np.random.uniform(low = 5, high = 20), 0))
+        coupon.save()
+        return coupon
+    else:
+        return None
 
 # Customer Homepage (Requires login)
 @customer_access()
@@ -38,4 +48,6 @@ def show_feedback_view(request):
 
 def thankyou_view(request):
     http_dict = http_dict_func(request)
+    coupon = random_coupon_gen(request.user.customer)
+    http_dict['coupon'] = coupon
     return render(request, 'feedback/thankyou.html', http_dict)

@@ -53,3 +53,10 @@
     border-style: hidden;
     border-radius: 5px;
 }
+
+#points_show {
+    width: 20px;
+    height: 20px;
+    border-radius: 40px;
+    padding: 10px;
+}
