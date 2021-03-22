@@ -33,7 +33,7 @@ def get_food_from_category(food_items, target_category):
     return chosen_foods
 
 def random_coupon_gen(customer):
-    thresh = 1
+    thresh = 0.1
     if(np.random.uniform() < thresh):
         coupon = Coupon(customer = customer, percentage = round(np.random.uniform(low = 5, high = 20), 0))
         coupon.save()
