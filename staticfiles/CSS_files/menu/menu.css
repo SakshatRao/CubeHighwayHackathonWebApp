@@ -75,7 +75,6 @@
     color: #00F5C0;
     border: none;
     margin-top: 5px;
-    padding: 10px;
 }
 
 .btn:hover, .btn:active, .btn:focus {
@@ -143,8 +142,4 @@
     padding: 15px;
     border: none;
     border-radius: 15px;
-}
-
-.badge {
-    margin-right: 5px;
 }

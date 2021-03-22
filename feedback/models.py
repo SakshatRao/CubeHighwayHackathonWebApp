@@ -14,7 +14,7 @@ class FoodItemFeedback(models.Model):
     comment = models.CharField(default = '', max_length = 20, blank = True)
     image = models.ImageField(upload_to = 'feedback_imgs/')
     rating = models.SmallIntegerField(default = 1, choices = [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5)], blank = True)
-    food_item = models.ForeignKey(FoodItem, on_delete = models.CASCADE, null = True)
+    food_item = models.ForeignKey(FoodItem, on_delete = models.CASCADE, null = True, blank = True)
     date = models.DateTimeField(auto_now_add = True)
 
 @receiver(post_delete, sender = FoodItemFeedback)

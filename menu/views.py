@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from utils.access import http_dict_func, customer_access
 import numpy as np
+import os
+import pickle
 
 from .models import FoodItem, OrderItem, Order
 from feedback.models import FoodItemFeedback
@@ -31,7 +33,7 @@ def get_food_from_category(food_items, target_category):
     return chosen_foods
 
 def random_coupon_gen(customer):
-    thresh = 0.1
+    thresh = 1
     if(np.random.uniform() < thresh):
         coupon = Coupon(customer = customer, percentage = round(np.random.uniform(low = 5, high = 20), 0))
         coupon.save()
@@ -39,12 +41,61 @@ def random_coupon_gen(customer):
     else:
         return None
 
+def get_recommendations(avail_items, item_ingr_map, ordered_item_ingrs):
+
+    with open('./assets/weights/ingredient_embeddings.npy', 'rb') as load_file:
+        embeddings = np.load(load_file)
+    with open('./assets/weights/ingredient_list.pkl', 'rb') as load_file:
+        used_ingredients = pickle.load(load_file)
+    
+    item_embeddings = np.zeros((255, 25))
+    for item_idx, item in enumerate(item_ingr_map):
+        item_embedding = np.zeros(25)
+        for ingr in item:
+            if(ingr in used_ingredients):
+                item_embedding = np.add(item_embedding, embeddings[used_ingredients.index(ingr), :])
+        item_embedding /= len(item)
+        item_embeddings[item_idx, :] = item_embedding
+    
+    person_embedding = np.zeros(25)
+    num_ingrs = 0
+    for item in ordered_item_ingrs:
+        for ingr in item:
+            if(ingr in used_ingredients):
+                person_embedding = np.add(person_embedding, embeddings[used_ingredients.index(ingr), :])
+                num_ingrs += 1
+    person_embedding /= num_ingrs
+    
+    distances = np.zeros(len(avail_items))
+    for idx in range(len(avail_items)):
+        distances[idx] = np.sqrt(np.sum(np.square(np.subtract(item_embeddings[idx, :], person_embedding))))
+    
+    sort_idx = np.argsort(distances)
+    return sort_idx[:5]
+
 # Customer Homepage (Requires login)
 @customer_access()
 def menu_view(request):
     
+    food_items = FoodItem.objects
+    avail_items = [x[0] for x in food_items.values_list('name')]
+    item_ingr_map = [x[0].split(', ') for x in FoodItem.objects.values_list('ingredients')]
+    ordered_item = [[y.food_item.name for y in x.orderitem_set.all()] for x in request.user.customer.order_set.all()]
+    ordered_item_ingrs = []
+    for x in ordered_item:
+        for y in x:
+            ordered_item_ingrs.append(y)
+    ordered_item_ingrs = [item_ingr_map[avail_items.index(x)] for x in ordered_item_ingrs]
+    recommended_idx = get_recommendations(avail_items, item_ingr_map, ordered_item_ingrs)
+    for item_idx, food_item in enumerate(food_items.all()):
+        if(item_idx in recommended_idx):
+            food_item.is_recommended = True
+        else:
+            food_item.is_recommended = False
+        food_item.save()
+    
     food_items = []
-    for food_item in FoodItem.objects.all():
+    for food_item in FoodItem.objects.order_by('-is_recommended', '-is_hot', '-rating'):
         food_item_dict = {}
         food_item_dict['name'] = food_item.name
         food_item_dict['descr'] = food_item.description

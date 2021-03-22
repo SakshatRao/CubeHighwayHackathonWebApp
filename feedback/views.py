@@ -1,13 +1,15 @@
 from django.shortcuts import render, redirect
 from utils.access import http_dict_func, customer_access
 import numpy as np
+import os
 
 from menu.models import FoodItem
 from . import forms
 from customer.models import Coupon
+from utils.recognize_img import predict_food
 
 def random_coupon_gen(customer):
-    thresh = 0.1
+    thresh = 1
     if(np.random.uniform() < thresh):
         coupon = Coupon(customer = customer, percentage = round(np.random.uniform(low = 5, high = 20), 0))
         coupon.save()
@@ -25,6 +27,14 @@ def feedback_view(request):
             feedback.customer = request.user.customer
             feedback.rating = int(request.POST['emoji_feedback'])
             feedback.save()
+            if(feedback.food_item == None):
+                predicted_food = predict_food(os.path.join('./mediafiles/feedback_imgs/', feedback.image.url.split('/')[-1]))
+                if(predicted_food != None):
+                    feedback.food_item = FoodItem.objects.filter(name = predicted_food)[0]
+                else:
+                    feedback.food_item = FoodItem.objects.all()[0]
+                feedback.save()
+            
             all_ratings = [x.rating for x in feedback.food_item.fooditemfeedback_set.all()]
             avg_rating = np.mean(all_ratings)
             feedback.food_item.rating = avg_rating
