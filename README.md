@@ -1,8 +1,8 @@
 # AI-Boosted Online Ordering
 ## Django-based Web Application proposal for Cube Highway Hackathon 2021
 <br></br>
-### Website: https://cubestop-online-ordering.herokuapp.com/
-### Demonstration Video: https://youtu.be/IwklL57bfVM
+### Website: https://online-ordering-cubestop.herokuapp.com/
+#### Feel free to sign-up and explore the website!
 <br></br>
 ## Features:
 * Virtual Menu: Displaying menu items with Smart Recommendations
